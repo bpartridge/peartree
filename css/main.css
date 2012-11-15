@@ -49,3 +49,19 @@ div[data-role="footer"] {
   background-color: red;
 }
 
+.collection-toolbar {
+  height: 56px;
+}
+
+.collection-toolbar-item {
+  /*width: 50%;*/
+  clear: none;
+  /*display: inline;*/
+  float: left;
+  padding: 8px;
+}
+
+.collection-toolbar-item-new .ui-btn {
+  margin: 0;
+  border: 0;
+}
