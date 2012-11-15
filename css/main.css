@@ -1,3 +1,12 @@
+/* Overthrow CSS:
+   Enable overflow: auto on elements
+   with overthrow class when html element
+   has overthrow class too */
+.overthrow-enabled .overthrow {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 /*
 Cause all pages to fill the screen.
 Note: all pages must have a footer for this to work.
@@ -75,7 +84,5 @@ div[data-role="footer"] {
 }
 
 #collection-table {
-  height: 100%;
-  overflow: visible;
 }
 
