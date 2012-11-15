@@ -42,7 +42,7 @@ div[data-role="footer"] {
 
 .below-landscape-container {
   position: absolute;
-  top: 300px;
+  top: 300px; /* .landscape-container height */
   bottom: 0;
   left: 0;
   right: 0;
@@ -65,3 +65,17 @@ div[data-role="footer"] {
   margin: 0;
   border: 0;
 }
+
+.collection-table-container {
+  position: absolute;
+  top: 56px; /* .collection-toolbar height */
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+#collection-table {
+  height: 100%;
+  overflow: visible;
+}
+
