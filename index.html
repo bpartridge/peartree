@@ -55,12 +55,12 @@
                 <% if (editable) { %>
                   <input type="text" name="name" class="name-input" value="<%= name %>"></input>
                 <% } else { %>
-                  <%= name || "Press and hold to set a name!" %>
+                  <%= (typeof(name) !== 'undefined' ? name : undefined) || "Press and hold to set a name!" %>
                   <a class="edit-button">&#9998;</a>
                 <% } %>
               </td>
               <td class="collection-table-row-location">
-                <%= locationName || "Drag the bars at left to set a location!" %>
+                <%= (typeof(locationName) !== 'undefined' ? locationName : null) || "Drag the bars at left to set a location!" %>
               </td>
             </script>
           </tbody>
