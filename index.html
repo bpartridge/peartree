@@ -1,79 +1,79 @@
 <!DOCTYPE html>
 <html>
-	<head>
-	<title>Hello World!</title>
-	<link rel="stylesheet" href="css/jquery.mobile-1.1.0.min.css" />
-	<link rel="stylesheet" href="css/main.css" />
-	<script src="js/jquery-1.7.1.min.js"></script>
-	<script src="js/jquery.mobile-1.1.0.min.js"></script>
-	<script src="js/overthrow.js"></script>
-	<script src="js/json2.js"></script>
-	<script src="js/underscore.js"></script>
-	<script src="js/backbone.js"></script>
-	<script src="js/backbone.marionette.js"></script>
-	<script src="js/parse-1.1.11.js"></script>
-	<script type="text/javascript" src="js/main.js"></script>
+  <head>
+  <title>Hello World!</title>
+  <link rel="stylesheet" href="css/jquery.mobile-1.1.0.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <script src="js/jquery-1.7.1.min.js"></script>
+  <script src="js/jquery.mobile-1.1.0.min.js"></script>
+  <script src="js/overthrow.js"></script>
+  <script src="js/json2.js"></script>
+  <script src="js/underscore.js"></script>
+  <script src="js/backbone.js"></script>
+  <script src="js/backbone.marionette.js"></script>
+  <script src="js/parse-1.1.11.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>
 </head>
 <body>
 
 <div data-role="page">
 
-	<div data-role="header">
-		<h1>PearTree: Find a Shed</h1>
-	</div><!-- /header -->
+  <div data-role="header">
+    <h1>PearTree: Find a Shed</h1>
+  </div><!-- /header -->
 
-	<div data-role="content">
-		<div class="landscape-container"></div>
-		<div class="below-landscape-container">
-			<div class="collection-toolbar ui-bar-a">
-				<div class="collection-toolbar-item collection-toolbar-item-new">
-					<button id="collection-new" data-inline="true">New Collection</button>
-				</div>
-				<div class="collection-toolbar-item collection-toolbar-item-search">
-					<input type="search" name="search" id="collection-search" value="" />
-					<!-- <div data-role="fieldcontain">
-						<label for="collection-search">
-							Search by Name:
-						</label>
-						<input type="search" name="search" id="collection-search" value="" />
-					</div> -->
-				</div>
-			</div>
-			<div id="collection-table-container" class="collection-table-container overthrow">
-				<table id="collection-table">
-					<thead>
-						<tr class="collection-table-header">
-							<td></td> <!-- Drag to a location -->
-							<td>Name</td>
-							<td>Location</td>
-						</tr>
-					</thead>
-					<tbody id="collection-table-body">
-						<script type="text/template" id="collection-table-row-template" tagname="tr">
-							<td>||</td>
-							<td class="collection-table-row-name">
-								<% if (editable) { %>
-									<input type="text" name="name" class="name-input" value="<%= name %>"></input>
-								<% } else { %>
-									<%= name || "Press and hold to set a name!" %>
-									<a class="edit-button">&#9998;</a>
-								<% } %>
-							</td>
-							<td class="collection-table-row-location">
-								<%= locationName || "Drag the bars at left to set a location!" %>
-							</td>
-						</script>
-				</tbody>
-				</table>
-			</div>
-		</div>
-	</div><!-- /content -->
+  <div data-role="content">
+    <div class="landscape-container"></div>
+    <div class="below-landscape-container">
+      <div class="collection-toolbar ui-bar-a">
+        <div class="collection-toolbar-item collection-toolbar-item-new">
+          <button id="collection-new" data-inline="true">New Collection</button>
+        </div>
+        <div class="collection-toolbar-item collection-toolbar-item-search">
+          <input type="search" name="search" id="collection-search" value="" />
+          <!-- <div data-role="fieldcontain">
+            <label for="collection-search">
+              Search by Name:
+            </label>
+            <input type="search" name="search" id="collection-search" value="" />
+          </div> -->
+        </div>
+      </div>
+      <div id="collection-table-container" class="collection-table-container overthrow">
+        <table id="collection-table">
+          <thead>
+            <tr class="collection-table-header">
+              <td></td> <!-- Drag to a location -->
+              <td>Name</td>
+              <td>Location</td>
+            </tr>
+          </thead>
+          <tbody id="collection-table-body">
+            <script type="text/template" id="collection-table-row-template" tagname="tr">
+              <td>||</td>
+              <td class="collection-table-row-name">
+                <% if (editable) { %>
+                  <input type="text" name="name" class="name-input" value="<%= name %>"></input>
+                <% } else { %>
+                  <%= name || "Press and hold to set a name!" %>
+                  <a class="edit-button">&#9998;</a>
+                <% } %>
+              </td>
+              <td class="collection-table-row-location">
+                <%= locationName || "Drag the bars at left to set a location!" %>
+              </td>
+            </script>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /content -->
 
-	<div data-role="footer">
-		<h4>
-			Made with love by your grandkids :)
-		</h4>
-	</div><!-- /footer -->
+  <div data-role="footer">
+    <h4>
+      Made with love by your grandkids :)
+    </h4>
+  </div><!-- /footer -->
 
 </div><!-- /page -->
 
