@@ -67,10 +67,10 @@ div[data-role="footer"] {
   clear: none;
   /*display: inline;*/
   float: left;
-  padding: 8px;
+  /*padding: 8px;*/
 }
 
-.collection-toolbar-item-new .ui-btn {
+.collection-toolbar-item-new .ui-button {
   margin: 0;
   border: 0;
 }
@@ -86,3 +86,28 @@ div[data-role="footer"] {
 #collection-table {
 }
 
+table {
+  color: black;
+  background: #fff;
+  border: 1px solid #b4b4b4;
+  border-spacing: 0;
+  font: bold 17px helvetica;
+  padding: 0;
+  width: 100%;
+}
+
+table tr td {
+  color: #666;
+  border-bottom: 1px solid #b4b4b4;
+  border-right: 1px solid #b4b4b4;
+  padding: 10px 10px 10px 10px;
+  background-image: -webkit-linear-gradient(top, #fdfdfd, #eee);
+}
+
+table tr td:last-child {
+  border-right: none;
+}
+
+table tbody tr:last-child td {
+  border-bottom: none;
+}​
