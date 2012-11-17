@@ -4,6 +4,18 @@ Parse.initialize("lgqSPxLEVRbJOPjo4reRqwZjwo6uywqMDivqHAfn", "vksdxe8mh23zaH2qzl
 
 // Generalized Backbone & Marionette extensions
 
+// Work around an obscure Chrome bug.
+// http://bugs.jquery.com/ticket/11663
+// https://code.google.com/p/chromium/issues/detail?id=104397
+// (function($) {
+//   var empty = $.fn.empty;
+//   $.fn.empty = function() {
+//     try { empty.apply(this, arguments); }
+//     catch (error) {}
+//     return this;
+//   }
+// })(jQuery);
+
 function makeFilteredCollection(collection){
   var filtered = new collection.constructor();
 
@@ -49,6 +61,10 @@ $(function() {
 
   var Item = Parse.Object.extend({
     className: "ShedItem",
+    initialize: function() {
+      if (!this.has("name")) this.set({name: null}, {silent: true});
+      if (!this.has("locationName")) this.set({locationName: null}, {silent: true});
+    },
     disabled_validate: function(attrs) {
       if (!attrs.locationName) {
         return "must have a location name";
@@ -62,15 +78,27 @@ $(function() {
       // {
       //   return "has an unknown location name";
       // }
-    },
-    defaults: {
-      name: undefined,
-      locationName: undefined
     }
   });
 
   var ItemCollection = Parse.Collection.extend({
     model: Item
+    // makeOneEditable: function() {
+    //   var toEdit = undefined;
+    //   // Make the first unnamed item editable, and all other items uneditable
+    //   this.each(function(item) {
+    //     if (!toEdit && (!item.has("name") || item.get("name") == "")) {
+    //       toEdit = item;
+    //     }
+    //     else {
+    //       item.set({editable: false});
+    //     }
+    //   });
+    //   // If there was not such an item, make a new one at the beginning.
+    //   if (!toEdit) {
+    //     this.unshift({editable: true});
+    //   }
+    // }
   });
 
   // DATA INSTANCES
@@ -85,28 +113,79 @@ $(function() {
     tagName: "tr",
     template: "#collection-table-row-template",
     initialize: function() {
+      // If a model was given with attributes, we don't edit.
+      var hasAttributes = this.model && _(this.model.attributes).size() > 0;
+      this.editing = !hasAttributes;
+
       this.bindTo(this.model, "change", this.render);
+    },
+    mixinTemplateHelpers: function(data) {
+      return _.extend({}, {
+        editing: this.editing,
+        name: null,
+        locationName: null
+      }, data);
     },
     events: {
       "click .edit-button": "startEdit",
       "taphold .collection-table-row-name": "startEdit",
       "change .name-input": "changeName",
-      "blur .name-input": "endEdit"
+      "blur .name-input": "endEdit",
+      "keypress .name-input": "handleKeypress"
     },
     startEdit: function() {
-      this.model.set({editable: true});
+      this.debug("startEdit");
+      this.editing = true;
+      this.render();
     },
     changeName: function() {
+      this.debug("changeName");
       var val = this.$(".name-input").val();
-      this.model.save({name: val}, {silent: true}); // will save but not re-render
+      this.model.save({name: val}, {silent: true});
+      // because it is silent, it will save but not re-render
     },
     endEdit: function() {
-      this.model.save({editable: false});
+      this.debug("endEdit");
+      this.model.save();
+      this.editing = false;
+
+      // Work around this Webkit issue.
+      // It may introduce a memory leak but at this point I don't care.
+      /*
+      https://code.google.com/p/chromium/issues/detail?id=104397
+
+      Suppose you remove an element X with removeChild, 
+      and that triggers an event (eg, blur), 
+      and the event removes that very element X. 
+      Should removeChild return success (by returning X), 
+      or should it throw an "element not found" exception?
+      Currently it does the latter.
+      */
+      this.el.innerHTML = "";
+
+      this.render();
       // this should cause a rerender, which should remove the text input box
     },
-    focusEdit: function() {
-      this.startEdit();
-      this.$(".name-input").focus();
+    handleKeypress: function(evt) {
+      if (evt.charCode == 13) { // RETURN
+        var ni = this.$(".name-input");
+        ni.val(ni.val().trim());
+        ni.blur(); // fires endEdit
+        evt.preventDefault();
+      }
+    },
+    // onBeforeRender: function() {
+    //   this.debug("before render");
+    // },
+    onRender: function() {
+      this.debug("render");
+      if (this.editing) {
+        this.debug("focusing");
+        this.$(".name-input").focus();
+      }
+    },
+    debug: function(text) {
+      forge.logging.debug("ItemRowView for " + this.model.id + ": " + text)
     }
   });
 
@@ -118,35 +197,43 @@ $(function() {
     },
     // This is called after every reset, but not after each add
     onRender: function() {
-      // Find the first view whose model is editable
-      var firstEditableView = _(this.children).find(function(view) {
-        return view.model.get("editable");
-      });
+      // // Find the first view whose model is editable
+      // var firstEditableView = _(this.children).find(function(view) {
+      //   return view.model.get("editable");
+      // });
 
-      if (firstEditableView) {
-        firstEditableView.focusEdit();
-      }
+      // if (firstEditableView) {
+      //   firstEditableView.focusEdit();
+      // }
     }
   });
 
   // VIEW WIRING
 
   var itemCollectionView = new ItemCollectionView({
-    el: $("#collection-table-body"),
-    collection: filteredItems
+    el: $("#collection-table tbody"),
+    collection: items
   });
 
   // Note that this must be a click event or focus will not work.
-  // Adding an item fires onItemAdded on the item collection view,
-  // which focuses the editing field.
-  $('#collection-new').click(function(evt) {
-    items.add({editable: true});
-    filteredItems.filter(null); // reset the filter
+  var newButton = $('#collection-new');
+  newButton.on("click", function(evt) {
+    forge.logging.debug("newButton tap");
+
+    items.add({}, {at: 0});
   });
 
   // INITIALIZE DATA
 
-  locations.fetch();
-  items.fetch();
+  locations.fetch({
+    success: function() {
+      forge.logging.debug("locations fetched");
+    }
+  });
+  items.fetch({
+    success: function() {
+      forge.logging.debug("items fetched");
+    }
+  });
 
 });
