@@ -223,19 +223,9 @@ $(function() {
     tagName: "tbody",
     itemView: ItemRowView,
     // This is called once for each member on a reset
-    onItemAdded: function(itemView) {
-    },
+    onItemAdded: function(itemView) {},
     // This is called after every reset, but not after each add
-    onRender: function() {
-      // // Find the first view whose model is editable
-      // var firstEditableView = _(this.children).find(function(view) {
-      //   return view.model.get("editable");
-      // });
-
-      // if (firstEditableView) {
-      //   firstEditableView.focusEdit();
-      // }
-    }
+    onRender: function() {}
   });
 
   // VIEW WIRING
