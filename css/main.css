@@ -115,7 +115,7 @@ table tr td {
   background-image: -webkit-linear-gradient(top, #fdfdfd, #eee);
 }
 
-.item-drag-handle {
+.item-drag-handle, .item-remove {
   text-align: center;
   width: 20px;
 }

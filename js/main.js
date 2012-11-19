@@ -2,6 +2,15 @@
 // Parse setup
 Parse.initialize("lgqSPxLEVRbJOPjo4reRqwZjwo6uywqMDivqHAfn", "vksdxe8mh23zaH2qzlyy6xr9ytEZVMZaiEAj5m8e");
 
+var debugWrap = function(obj, attr, pause, msg) {
+  var oldFunc = obj[attr];
+  obj[attr] = function() {
+    console.log(attr, arguments, msg);
+    if (pause) debugger;
+    oldFunc.apply(this, arguments);
+  }
+}
+
 // Generalized Backbone & Marionette extensions
 
 // Work around an obscure Chrome bug.
@@ -138,6 +147,9 @@ $(function() {
       this.bindTo(this.model, "startEdit", this.startEdit, this);
       this.bindTo(this.model, "endEdit", this.endEdit, this);
       this.bindTo(this.model, "change", this.render, this);
+
+      // debugWrap(this, "handleRemoveRequest");
+      // debugWrap(this, "remove");
     },
     mixinTemplateHelpers: function(data) {
       return _.extend({}, {
@@ -151,7 +163,8 @@ $(function() {
       "taphold .item-name": "startEdit",
       "change .name-input": "changeName",
       "blur .name-input": "endEdit",
-      "keypress .name-input": "handleKeypress"
+      "keypress .name-input": "handleKeypress",
+      "click .item-remove": "handleRemoveRequest"
     },
     startEdit: function() {
       this.debug("startEdit");
@@ -196,6 +209,10 @@ $(function() {
         evt.preventDefault();
       }
     },
+    handleRemoveRequest: function(evt) {
+      // debugger;
+      this.model.destroy();
+    },
     // onRender is called after the template has been rendered.
     onRender: function() {
       this.debug("render");
@@ -209,8 +226,10 @@ $(function() {
         helper: function(evt) {
           // A conundrum wrapped in an enigma, wrapped in pastry, wrapped in a lie.
           // Clone this table row and wrap it in a table and a div.
+          // From the clone, remove edit and removal buttons.
           // Also, add a reference to the Backbone model in the data.
           return thisView.$el.clone()
+            .find('.edit-button, td:gt(2)').remove().end()
             .wrap('<tbody>').parent()
             .wrap('<table>').parent()
             .wrap('<div>').parent().addClass('drag-helper')
@@ -313,7 +332,7 @@ $(function() {
     var offset = locationCollectionView.$el.offset();
 
     var _debug = function(text) {
-      forge.logging.debug("Dragging " + item.id + ": " + text)
+      // forge.logging.debug("Dragging " + item.id + ": " + text)
     }
     _debug("starting");
 
