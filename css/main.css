@@ -84,15 +84,12 @@ div[data-role="footer"] {
   border: 0;
 }
 
-.collection-table-container {
+.item-table-container {
   position: absolute;
   top: 56px; /* .collection-toolbar height */
   bottom: 0;
   left: 0;
   right: 0;
-}
-
-#collection-table {
 }
 
 table {
@@ -112,6 +109,11 @@ table tr td {
   border-right: 1px solid #b4b4b4;
   padding: 10px 10px 10px 10px;
   background-image: -webkit-linear-gradient(top, #fdfdfd, #eee);
+}
+
+.item-drag-handle {
+  text-align: center;
+  width: 20px;
 }
 
 /*table tr td:last-child {

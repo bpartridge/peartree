@@ -133,7 +133,7 @@ $(function() {
 
   var ItemRowView = Backbone.Marionette.ItemView.extend({
     tagName: "tr",
-    template: "#collection-table-row-template",
+    template: "#item-template",
     initialize: function() {
       this.bindTo(this.model, "startEdit", this.startEdit, this);
       this.bindTo(this.model, "endEdit", this.endEdit, this);
@@ -148,7 +148,7 @@ $(function() {
     },
     events: {
       "click .edit-button": "startEdit",
-      "taphold .collection-table-row-name": "startEdit",
+      "taphold .item-name": "startEdit",
       "change .name-input": "changeName",
       "blur .name-input": "endEdit",
       "keypress .name-input": "handleKeypress"
@@ -205,8 +205,7 @@ $(function() {
       }
 
       var thisView = this;
-      thisView.$el.draggable({
-        handle: ".collection-table-row-draggable",
+      thisView.$(".item-drag-handle").draggable({
         helper: function(evt) {
           // A conundrum wrapped in an enigma, wrapped in pastry, wrapped in a lie.
           // Clone this table row and wrap it in a table and a div.
@@ -253,7 +252,7 @@ $(function() {
 
       this.bindTo(this.model, "change", this.render, this);
 
-      var LOCATION_CLASS = ".collection-table-row-location";
+      var LOCATION_CLASS = ".item-location";
       var thisView = this;
 
       this.$el.hover(function() {
@@ -284,12 +283,12 @@ $(function() {
   // VIEW WIRING
 
   var itemCollectionView = new ItemCollectionView({
-    el: $("#collection-table tbody").get(0),
+    el: $("#item-table tbody").get(0),
     collection: items
   });
 
   // Note that this must be a click event or focus will not work.
-  var newButton = $('#collection-new');
+  var newButton = $('#item-new');
   newButton.on("click", function(evt) {
     forge.logging.debug("newButton tap");
 
@@ -319,7 +318,7 @@ $(function() {
     _debug("starting");
 
     var dragHandler = function(_unusedItem, evt, ui) {
-      var $helperLocName = ui.helper.find(".collection-table-row-location");
+      var $helperLocName = ui.helper.find(".item-location");
       var relX = evt.pageX - offset.left;
       var relY = evt.pageY - offset.top;
       _debug("relX " + relX + " relY " + relY);
