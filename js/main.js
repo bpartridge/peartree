@@ -174,15 +174,29 @@ $(function() {
         evt.preventDefault();
       }
     },
-    // onBeforeRender: function() {
-    //   this.debug("before render");
-    // },
+    // onRender is called after the template has been rendered.
     onRender: function() {
       this.debug("render");
       if (this.editing) {
         this.debug("focusing");
         this.$(".name-input").focus();
       }
+
+      var thisView = this;
+      thisView.$el.draggable({
+        handle: ".collection-table-row-draggable",
+        helper: function(evt) {
+          // A conundrum wrapped in an enigma, wrapped in pastry, wrapped in a lie.
+          // Clone this table row and wrap it in a table and a div.
+          // Also, add a reference to the Backbone model in the data.
+          return thisView.$el.clone()
+            .wrap('<tbody>').parent()
+            .wrap('<table>').parent()
+            .wrap('<div>').parent().addClass('drag-helper')
+            .data('model', thisView.model)
+            .appendTo('body');
+        }
+      })
     },
     debug: function(text) {
       forge.logging.debug("ItemRowView for " + this.model.id + ": " + text)
