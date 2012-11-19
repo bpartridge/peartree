@@ -255,11 +255,11 @@ $(function() {
       var LOCATION_CLASS = ".item-location";
       var thisView = this;
 
-      this.$el.hover(function() {
-        $(this).stop().animate({opacity: 0.8})
-      }, function() {
-        $(this).stop().animate({opacity: 0})
-      }).mouseleave(); // immediately trigger exit
+      // this.$el.hover(function() {
+      //   $(this).stop().animate({opacity: 0.8})
+      // }, function() {
+      //   $(this).stop().animate({opacity: 0})
+      // }).mouseleave(); // immediately trigger exit
     },
     render: function() {
       var thisView = this;

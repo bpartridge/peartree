@@ -55,7 +55,11 @@ div[data-role="footer"] {
   color: #FFFFFF; /* white */
   text-shadow: none;
   text-align: center;
+  display: inline-block;
+  border-radius: 5px;
   vertical-align: middle;
+  line-height: 2em;
+  opacity: 0.5;
 }
 
 .below-landscape-container {
