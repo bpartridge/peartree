@@ -90,6 +90,10 @@ $(function() {
       // {
       //   return "has an unknown location name";
       // }
+    },
+    defaults: {
+      name: null,
+      locationName: null
     }
   });
 
@@ -125,12 +129,9 @@ $(function() {
     tagName: "tr",
     template: "#collection-table-row-template",
     initialize: function() {
-      // If a model was given with attributes, we don't edit.
-      var hasAttributes = this.model && _(this.model.attributes).size() > 0;
-      this.debug("initialize attributes:" + JSON.stringify(this.model.attributes));
-      this.editing = !hasAttributes;
-
-      this.bindTo(this.model, "change", this.render);
+      this.bindTo(this.model, "startEdit", this.startEdit, this);
+      this.bindTo(this.model, "endEdit", this.endEdit, this);
+      this.bindTo(this.model, "change", this.render, this);
     },
     mixinTemplateHelpers: function(data) {
       return _.extend({}, {
@@ -159,6 +160,8 @@ $(function() {
     },
     endEdit: function() {
       this.debug("endEdit");
+      if (!this.editing) return;
+
       this.model.save();
       this.editing = false;
 
@@ -247,7 +250,12 @@ $(function() {
   newButton.on("click", function(evt) {
     forge.logging.debug("newButton tap");
 
+    items.each(function(item) {
+      item.trigger("endEdit");
+    });
+
     items.add({}, {at: 0});
+    items.at(0).trigger("startEdit").save();
   });
 
   // INITIALIZE DATA
