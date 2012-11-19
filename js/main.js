@@ -64,6 +64,12 @@ $(function() {
           !(attrs.width >= 0) || !(attrs.height >= 0)) {
         return "must have nonnegative left, top, width, height";
       }
+    },
+    containsPoint: function(x, y) {
+      var dict = this.toJSON();
+      var test = x >= dict.left && x < dict.left + dict.width &&
+        y >= dict.top && y < dict.top + dict.height;
+      return test;
     }
   });
 
@@ -210,10 +216,20 @@ $(function() {
             .wrap('<table>').parent()
             .wrap('<div>').parent().addClass('drag-helper')
             .data('model', thisView.model)
-            .data('originalLocationName', thisView.model.get("locationName") || "")
-            .appendTo('body');
+            .data('originalLocationName', thisView.model.get("locationName") || "");
+        },
+        appendTo: "body",
+        cursorAt: {left: -5, top: -5},
+        start: function(evt, ui) {
+          thisView.model.trigger("drag", thisView.model, evt, ui);
+        },
+        drag: function(evt, ui) {
+          thisView.model.trigger("drag", thisView.model, evt, ui);
+        },
+        stop: function(evt, ui) {
+          thisView.model.trigger("drag", thisView.model, evt, ui);
         }
-      })
+      });
     },
     debug: function(text) {
       forge.logging.debug("ItemRowView for " + this.model.id + ": " + text)
@@ -236,30 +252,15 @@ $(function() {
       if (!this.model) throw "LocationView must have a model.";
 
       this.bindTo(this.model, "change", this.render, this);
-      this.render();
 
       var LOCATION_CLASS = ".collection-table-row-location";
       var thisView = this;
 
-      this.$el.droppable({
-        over: function(evt, ui) {
-          ui.helper.find(LOCATION_CLASS).text(thisView.model.get("name"));
-        },
-        out: function(evt, ui) {
-          var originalLocationName = ui.helper.data("originalLocationName");
-          ui.helper.find(LOCATION_CLASS).text(originalLocationName);
-        },
-        drop: function(evt, ui) {
-          var model = ui.helper.data("model");
-          model.save({locationName: thisView.model.get("name")});
-        }
-      });
-
-      // this.$el.hover(function() {
-      //   $(this).stop().animate({opacity: 0.8})
-      // }, function() {
-      //   $(this).stop().animate({opacity: 0})
-      // }).mouseleave(); // immediately trigger exit
+      this.$el.hover(function() {
+        $(this).stop().animate({opacity: 0.8})
+      }, function() {
+        $(this).stop().animate({opacity: 0})
+      }).mouseleave(); // immediately trigger exit
     },
     render: function() {
       var thisView = this;
@@ -269,6 +270,9 @@ $(function() {
         if (val != null) thisView.$el.css(attr, (val || 0) + "px");
       });
       this.el.innerHTML = this.model.get("name");
+    },
+    debug: function(text) {
+      forge.logging.debug("LocationView: " + text);
     }
   });
 
@@ -300,6 +304,49 @@ $(function() {
   var locationCollectionView = new LocationCollectionView({
     el: $(".landscape-container").get(0),
     collection: locations
+  });
+
+  items.on("drag", function(item, startEvt, startUi) {
+    // Filter only for drag starts
+    if (startEvt.type !== 'dragstart') return;
+
+    var originalLocationName = item.get("locationName");
+    var offset = locationCollectionView.$el.offset();
+
+    var _debug = function(text) {
+      forge.logging.debug("Dragging " + item.id + ": " + text)
+    }
+    _debug("starting");
+
+    var dragHandler = function(_unusedItem, evt, ui) {
+      var $helperLocName = ui.helper.find(".collection-table-row-location");
+      var relX = evt.pageX - offset.left;
+      var relY = evt.pageY - offset.top;
+      _debug("relX " + relX + " relY " + relY);
+
+      var dragLoc = locations.find(function(loc) {
+        return loc.containsPoint(relX, relY);
+      });
+      if (dragLoc) {
+        _debug("dragLoc " + dragLoc.id);
+        $helperLocName.text(dragLoc.get('name') || "");
+
+        if (evt.type == 'dragstop') {
+          _debug("saving");
+          item.save({locationName: dragLoc.get('name')});
+        }
+      }
+      else {
+        _debug("resetting");
+        $helperLocName.text(originalLocationName || "");
+      }
+
+      if (evt.type == 'dragstop') {
+        _debug("removing dragHandler");
+        item.off("drag", dragHandler);
+      }
+    }
+    item.on("drag", dragHandler);
   });
 
   // INITIALIZE DATA

@@ -98,7 +98,8 @@ div[data-role="footer"] {
 table {
   color: black;
   background: #fff;
-  border: 1px solid #b4b4b4;
+  border-top: 1px solid #b4b4b4;
+  border-left: 1px solid #b4b4b4;
   border-spacing: 0;
   font: bold 17px helvetica;
   padding: 0;
@@ -113,10 +114,14 @@ table tr td {
   background-image: -webkit-linear-gradient(top, #fdfdfd, #eee);
 }
 
-table tr td:last-child {
+/*table tr td:last-child {
   border-right: none;
 }
 
 table tbody tr:last-child td {
   border-bottom: none;
-}​
+}*/
+
+.drag-helper {
+  z-index: 100;
+}
