@@ -210,6 +210,7 @@ $(function() {
             .wrap('<table>').parent()
             .wrap('<div>').parent().addClass('drag-helper')
             .data('model', thisView.model)
+            .data('originalLocationName', thisView.model.get("locationName") || "")
             .appendTo('body');
         }
       })
@@ -228,10 +229,58 @@ $(function() {
     onRender: function() {}
   });
 
+  var LocationView = Backbone.Marionette.ItemView.extend({
+    tagName: "div",
+    className: "landscape-location",
+    initialize: function() {
+      if (!this.model) throw "LocationView must have a model.";
+
+      this.bindTo(this.model, "change", this.render, this);
+      this.render();
+
+      var LOCATION_CLASS = ".collection-table-row-location";
+      var thisView = this;
+
+      this.$el.droppable({
+        over: function(evt, ui) {
+          ui.helper.find(LOCATION_CLASS).text(thisView.model.get("name"));
+        },
+        out: function(evt, ui) {
+          var originalLocationName = ui.helper.data("originalLocationName");
+          ui.helper.find(LOCATION_CLASS).text(originalLocationName);
+        },
+        drop: function(evt, ui) {
+          var model = ui.helper.data("model");
+          model.save({locationName: thisView.model.get("name")});
+        }
+      });
+
+      // this.$el.hover(function() {
+      //   $(this).stop().animate({opacity: 0.8})
+      // }, function() {
+      //   $(this).stop().animate({opacity: 0})
+      // }).mouseleave(); // immediately trigger exit
+    },
+    render: function() {
+      var thisView = this;
+      _(['left','top','width','height']).each(function(attr) {
+        var val = thisView.model.get(attr);
+        // forge.logging.debug(attr + " = " + val);
+        if (val != null) thisView.$el.css(attr, (val || 0) + "px");
+      });
+      this.el.innerHTML = this.model.get("name");
+    }
+  });
+
+  var LocationCollectionView = Backbone.Marionette.CollectionView.extend({
+    tagName: "div",
+    itemView: LocationView
+  });
+
   // VIEW WIRING
 
   var itemCollectionView = new ItemCollectionView({
-    el: $("#collection-table tbody"),
+    el: $("#collection-table tbody").get(0),
     collection: items
   });
 
@@ -246,6 +295,11 @@ $(function() {
 
     items.add({}, {at: 0});
     items.at(0).trigger("startEdit").save();
+  });
+
+  var locationCollectionView = new LocationCollectionView({
+    el: $(".landscape-container").get(0),
+    collection: locations
   });
 
   // INITIALIZE DATA

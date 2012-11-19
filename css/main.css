@@ -49,6 +49,15 @@ div[data-role="footer"] {
   background-color: green;
 }
 
+.landscape-location {
+  position: absolute;
+  background-color: #87CEFA; /* light sky blue */
+  color: #FFFFFF; /* white */
+  text-shadow: none;
+  text-align: center;
+  vertical-align: middle;
+}
+
 .below-landscape-container {
   position: absolute;
   top: 300px; /* .landscape-container height */
