@@ -16,6 +16,18 @@ Parse.initialize("lgqSPxLEVRbJOPjo4reRqwZjwo6uywqMDivqHAfn", "vksdxe8mh23zaH2qzl
 //   }
 // })(jQuery);
 
+// Fix item insertion order
+Backbone.Marionette.CollectionView.prototype.appendHtml =
+function(collectionView, itemView, index) {
+  var children = collectionView.$el.children();
+  if (index < children.size()) {
+    itemView.$el.insertBefore(children[index]);
+  }
+  else {
+    itemView.$el.appendTo(collectionView.el);
+  }
+}
+
 function makeFilteredCollection(collection){
   var filtered = new collection.constructor();
 
@@ -61,7 +73,7 @@ $(function() {
 
   var Item = Parse.Object.extend({
     className: "ShedItem",
-    initialize: function() {
+    disabled_initialize: function() {
       if (!this.has("name")) this.set({name: null}, {silent: true});
       if (!this.has("locationName")) this.set({locationName: null}, {silent: true});
     },
@@ -115,6 +127,7 @@ $(function() {
     initialize: function() {
       // If a model was given with attributes, we don't edit.
       var hasAttributes = this.model && _(this.model.attributes).size() > 0;
+      this.debug("initialize attributes:" + JSON.stringify(this.model.attributes));
       this.editing = !hasAttributes;
 
       this.bindTo(this.model, "change", this.render);

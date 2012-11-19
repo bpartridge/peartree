@@ -4580,7 +4580,7 @@
       // Insert models into the collection, re-sorting if needed, and triggering
       // `add` events unless silenced.
       this.length += length;
-      index = options.at || this.models.length;
+      index = options.at != null ? options.at : this.models.length;
       this.models.splice.apply(this.models, [index, 0].concat(models));
       if (this.comparator) {
         this.sort({silent: true});
