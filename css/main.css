@@ -13,9 +13,11 @@ Note: all pages must have a footer for this to work.
 */
 
 body {
-  margin:0;
-  border:0;
-  padding:0;
+  height: auto;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  padding: 0;
 }
 
 div[data-role="header"] {
@@ -45,7 +47,7 @@ div[data-role="footer"] {
   top: 0;
   left: 0;
   right: 0;
-  height: 300px;
+  height: 45%;
   background-color: green;
 }
 
@@ -64,7 +66,7 @@ div[data-role="footer"] {
 
 .below-landscape-container {
   position: absolute;
-  top: 300px; /* .landscape-container height */
+  top: 45%; /* .landscape-container height */
   bottom: 0;
   left: 0;
   right: 0;

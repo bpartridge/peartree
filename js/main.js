@@ -2,16 +2,26 @@
 // Parse setup
 Parse.initialize("lgqSPxLEVRbJOPjo4reRqwZjwo6uywqMDivqHAfn", "vksdxe8mh23zaH2qzlyy6xr9ytEZVMZaiEAj5m8e");
 
-var debugWrap = function(obj, attr, pause, msg) {
+var debugWrap = function(obj, attr, pause) {
   var oldFunc = obj[attr];
   obj[attr] = function() {
-    console.log(attr, arguments, msg);
     if (pause) debugger;
-    oldFunc.apply(this, arguments);
+    var rval = oldFunc.apply(this, arguments);
+    console.log(attr, arguments, "->", rval);
   }
 }
 
-// Generalized Backbone & Marionette extensions
+// Generalized jQuery, Backbone, Marionette extensions
+
+$.mobile.getZoomRatio = function() {
+  return parseFloat($('body').css('zoom'));
+}
+
+$.mobile.getScreenHeight = function() {
+  var old = window.innerHeight || $( window ).height();
+  return old / $.mobile.getZoomRatio();
+}
+debugWrap($.mobile, "getScreenHeight");
 
 // Work around an obscure Chrome bug.
 // http://bugs.jquery.com/ticket/11663
