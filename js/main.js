@@ -47,28 +47,6 @@ function(collectionView, itemView, index) {
   }
 }
 
-function makeFilteredCollection(collection){
-  var filtered = new collection.constructor();
-
-  filtered.filter = function(criteria){
-    var items;
-    if (criteria){
-      items = collection.where(criteria);
-    } else {
-      items = collection.models;
-    }
-    filtered.reset(items);
-  };
-  collection.on("change", function(model){
-    filtered.reset(collection.models);
-  });
-  collection.on("reset", function(){
-    filtered.reset(collection.models);
-  });            
-
-  return filtered;
-}
-
 // Setup shed finder
 $(function() {
 
@@ -124,29 +102,7 @@ $(function() {
 
   var ItemCollection = Parse.Collection.extend({
     model: Item
-    // makeOneEditable: function() {
-    //   var toEdit = undefined;
-    //   // Make the first unnamed item editable, and all other items uneditable
-    //   this.each(function(item) {
-    //     if (!toEdit && (!item.has("name") || item.get("name") == "")) {
-    //       toEdit = item;
-    //     }
-    //     else {
-    //       item.set({editable: false});
-    //     }
-    //   });
-    //   // If there was not such an item, make a new one at the beginning.
-    //   if (!toEdit) {
-    //     this.unshift({editable: true});
-    //   }
-    // }
   });
-
-  // DATA INSTANCES
-
-  var locations = new LocationCollection();
-  var items = new ItemCollection();
-  var filteredItems = makeFilteredCollection(items);
 
   // VIEW CLASS DECLARATIONS
 
@@ -309,11 +265,19 @@ $(function() {
     itemView: LocationView
   });
 
+  // DATA INSTANCES
+
+  var locations = new LocationCollection();
+  var items = new ItemCollection();
+  var filteredItems = new Parse.FilteredCollection(null, {
+    collection: items
+  });
+
   // VIEW WIRING
 
   var itemCollectionView = new ItemCollectionView({
     el: $("#item-table tbody").get(0),
-    collection: items
+    collection: filteredItems
   });
 
   // Note that this must be a click event or focus will not work.
