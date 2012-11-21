@@ -95,6 +95,10 @@ div[data-role="footer"] {
   right: 0;
 }
 
+.item-table-container input {
+  font-size: 16px;
+}
+
 table {
   color: black;
   background: #fff;

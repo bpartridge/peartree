@@ -13,6 +13,9 @@ var debugWrap = function(obj, attr, pause) {
 
 // Generalized jQuery, Backbone, Marionette extensions
 
+// Quicker taphold sensitivity
+$.event.special.tap.tapholdThreshold = 250;
+
 $.mobile.getZoomRatio = function() {
   return parseFloat($('body').css('zoom'));
 }
