@@ -251,12 +251,28 @@ $(function() {
     },
     render: function() {
       var thisView = this;
-      _(['left','top','width','height']).each(function(attr) {
-        var val = thisView.model.get(attr);
-        // forge.logging.debug(attr + " = " + val);
-        if (val != null) thisView.$el.css(attr, (val || 0) + "px");
-      });
-      this.el.innerHTML = this.model.get("name");
+
+      var origHeight = 480, origWidth = 672, /* TODO: don't hard-code this */
+        elHeight = $('.landscape-container').height(),
+        elWidth = $('.landscape-container').width(),
+        ratio = elHeight / origHeight,
+        leftOff = (elWidth - origWidth) / 2;
+
+      // console.log(ratio);
+
+      var attrs = this.model.attributes;
+      var setCSS = function(attr, val) {
+        if (!isNaN(val)) thisView.$el.css(attr, (val || 0) + "px");
+      }
+
+      setCSS('left', attrs.left + leftOff);
+      setCSS('top', attrs.top);
+      setCSS('width', attrs.width * ratio);
+      setCSS('height', attrs.height * ratio);
+
+      if (this.model.has('zIndex')) this.$el.css('z-index', this.model.get('zIndex'));
+
+      // this.el.innerHTML = this.model.get("name");
     },
     useAsFilter: function(evt) {
       this.model.trigger("useAsFilter", this.model, evt);
@@ -326,16 +342,41 @@ $(function() {
       var relY = evt.pageY - offset.top;
       _debug("relX " + relX + " relY " + relY);
 
-      var dragLoc = locations.find(function(loc) {
-        return loc.containsPoint(relX, relY);
-      });
+      var dragLoc = _(locationCollectionView.children).chain()
+        .filter(function(view) {
+          var viewPos = view.$el.position(),
+            viewWidth = view.$el.width(),
+            viewHeight = view.$el.height();
+
+          return relX >= viewPos.left &&
+            relX < viewPos.left + viewWidth &&
+            relY >= viewPos.top &&
+            relY < viewPos.top + viewHeight;
+        })
+        .pluck('model')
+        .max(function(model) {
+          return model.get('zIndex');
+        })
+        .value();
+
+      // Broken version not using DOM:
+      // var dragLoc = locations.find(function(loc) {
+      //   return loc.containsPoint(relX, relY);
+      // });
+
       if (dragLoc) {
         _debug("dragLoc " + dragLoc.id);
         $helperLocName.text(dragLoc.get('name') || "");
 
         if (evt.type == 'dragstop') {
-          _debug("saving");
-          item.save({locationName: dragLoc.get('name')});
+
+          if (dragLoc.has('restriction')) {
+            alert(dragLoc.get('restriction'));
+          }
+          else {
+            _debug("saving");
+            item.save({locationName: dragLoc.get('name')});
+          }
         }
       }
       else {

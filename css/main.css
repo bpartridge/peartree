@@ -47,26 +47,23 @@ div[data-role="footer"] {
   top: 0;
   left: 0;
   right: 0;
-  height: 45%;
-  background-color: green;
+  margin-left: auto;
+  margin-right: auto;
+  height: 480px;
+  background-image: url('../drawing.jpg');
+  background-color: black;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 .landscape-location {
   position: absolute;
-  background-color: #87CEFA; /* light sky blue */
-  color: #FFFFFF; /* white */
-  text-shadow: none;
-  text-align: center;
-  display: inline-block;
-  border-radius: 5px;
-  vertical-align: middle;
-  line-height: 2em;
-  opacity: 0.5;
 }
 
 .below-landscape-container {
   position: absolute;
-  top: 45%; /* .landscape-container height */
+  top: 480px; /* .landscape-container height */
   bottom: 0;
   left: 0;
   right: 0;
