@@ -7291,7 +7291,7 @@ $.widget( "mobile.textinput", $.mobile.widget, {
 				.bind('click', function( event ) {
 					input
 						.val( "" )
-						// .focus()
+						.focus()
 						.trigger( "change" );
 					clearbtn.addClass( "ui-input-clear-hidden" );
 					event.preventDefault();
