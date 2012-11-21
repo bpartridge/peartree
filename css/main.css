@@ -49,7 +49,7 @@ div[data-role="footer"] {
   right: 0;
   margin-left: auto;
   margin-right: auto;
-  height: 480px;
+  height: 45%;
   background-image: url('../drawing.jpg');
   background-color: black;
   background-repeat: no-repeat;
@@ -63,7 +63,7 @@ div[data-role="footer"] {
 
 .below-landscape-container {
   position: absolute;
-  top: 480px; /* .landscape-container height */
+  top: 45%; /* .landscape-container height */
   bottom: 0;
   left: 0;
   right: 0;
@@ -132,10 +132,10 @@ table tbody tr:last-child td {
 }
 
 img.compass-rose {
-  width: 150px;
-  transform:rotate(30deg);
-  -ms-transform:rotate(30deg); /* IE 9 */
-  -moz-transform:rotate(30deg); /* Firefox */
-  -webkit-transform:rotate(30deg); /* Safari and Chrome */
-  -o-transform:rotate(30deg); /* Opera */
+  width: 100px;
+  transform:rotate(20deg);
+  -ms-transform:rotate(20deg); /* IE 9 */
+  -moz-transform:rotate(20deg); /* Firefox */
+  -webkit-transform:rotate(20deg); /* Safari and Chrome */
+  -o-transform:rotate(20deg); /* Opera */
 }

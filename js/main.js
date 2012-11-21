@@ -256,7 +256,7 @@ $(function() {
         elHeight = $('.landscape-container').height(),
         elWidth = $('.landscape-container').width(),
         ratio = elHeight / origHeight,
-        leftOff = (elWidth - origWidth) / 2;
+        leftOff = (elWidth - origWidth * ratio) / 2;
 
       // console.log(ratio);
 
@@ -265,8 +265,8 @@ $(function() {
         if (!isNaN(val)) thisView.$el.css(attr, (val || 0) + "px");
       }
 
-      setCSS('left', attrs.left + leftOff);
-      setCSS('top', attrs.top);
+      setCSS('left', attrs.left * ratio + leftOff);
+      setCSS('top', attrs.top * ratio);
       setCSS('width', attrs.width * ratio);
       setCSS('height', attrs.height * ratio);
 
