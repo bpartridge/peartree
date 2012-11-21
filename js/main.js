@@ -246,6 +246,9 @@ $(function() {
       //   $(this).stop().animate({opacity: 0})
       // }).mouseleave(); // immediately trigger exit
     },
+    events: {
+      "click": "useAsFilter"
+    },
     render: function() {
       var thisView = this;
       _(['left','top','width','height']).each(function(attr) {
@@ -254,6 +257,9 @@ $(function() {
         if (val != null) thisView.$el.css(attr, (val || 0) + "px");
       });
       this.el.innerHTML = this.model.get("name");
+    },
+    useAsFilter: function(evt) {
+      this.model.trigger("useAsFilter", this.model, evt);
     },
     debug: function(text) {
       forge.logging.debug("LocationView: " + text);
@@ -270,8 +276,12 @@ $(function() {
   var locations = new LocationCollection();
   var items = new ItemCollection();
   var filteredItems = new Parse.FilteredCollection(null, {
-    collection: items
+    fullCollection: items
   });
+  // debugWrap(filteredItems, "setFilter");
+  // debugWrap(filteredItems, "_forceAddModel");
+  // debugWrap(filteredItems, "_forceRemoveModel");
+  // debugWrap(filteredItems, "_onModelEvent");
 
   // VIEW WIRING
 
@@ -339,6 +349,38 @@ $(function() {
       }
     }
     item.on("drag", dragHandler);
+  });
+
+  var searchField = $('#collection-search');
+  searchField.on('change keyup', function(evt) {
+    var val = searchField.val();
+    forge.logging.debug("searchField: " + val + " <- " + evt.type);
+    if (!val || val == "") {
+      filteredItems.setFilter(false);
+    }
+    else if (val.indexOf("@") == 0) {
+      var locationName = val.substring(1);
+      filteredItems.setFilter(function(item) {
+        return item.get('locationName') === locationName;
+      });
+    }
+    else {
+      var lval = val.toLowerCase();
+      filteredItems.setFilter(function(item) {
+        return (item.get('name') || "").toLowerCase().indexOf(lval) >= 0 ||
+          (item.get('locationName') || "").toLowerCase().indexOf(lval) >= 0;
+      });
+    }
+    forge.logging.debug("  searchField done")
+  });
+
+  locations.on("useAsFilter", function(location) {
+    var locationName = location.get("name");
+    forge.logging.debug("useAsFilter: " + locationName);
+    // searchField.val("");
+    // searchField.keyup();
+    searchField.val("@" + locationName);
+    searchField.keyup(); // ensure the clear button is shown
   });
 
   // INITIALIZE DATA
